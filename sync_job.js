@@ -1,3 +1,4 @@
+const yargs = require('yargs');
 const constants = require('./common/moduleConstants');
 const {connMysqlB, connMysqlA, connMysqlC, getMysqlConnection} = require("./db/mysql_connections");
 const {connFb} = require('./db/firebase_connections');
@@ -30,9 +31,8 @@ function getPaymentDataWithoutExternalDBId(serverName, callback) {
     });
 }
 
-function test() {
+function runJob() {
     let serverNames = [constants.SERVIDOR_A, constants.SERVIDOR_B, constants.SERVIDOR_C];
-
     /*
     * This guy transfers orders that are not supposed to be in the server in question, it moves orders to the correct server
     * */
@@ -67,7 +67,7 @@ function test() {
 
     serverNames.forEach(originServer => {
         getPaymentDataWithoutExternalDBId(originServer, (errors, payments) => {
-            if(!errors){
+            if (!errors) {
                 transferPaymentsToExternalDB(connFb, payments, originServer)
             } else {
                 console.log(errors);
@@ -76,4 +76,39 @@ function test() {
     });
 }
 
-test();
+function runInterval(minutes) {
+    console.log("Running sync job");
+    const the_interval = minutes * 60 * 1000;
+    setInterval(runJob, the_interval);
+}
+
+yargs.version('1.1.0')
+
+// Create add command
+yargs.command({
+    command: 'run',
+    describe: 'Starts a job that will run every X minutes set by the user',
+    builder: {
+        minutes: {
+            describe: 'Minutes that will happen between each cycle',
+            demandOption: true,  // Required
+            type: 'number'
+        }
+    },
+
+    // Function for your command
+    handler(argv) {
+        const the_interval = argv.minutes * 60 * 1000;
+        setInterval(runJob, the_interval);
+    }
+}).command({
+    command: 'run-now',
+    describe: 'Runs the process right away',
+
+    // Function for your command
+    handler(argv) {
+        runJob();
+    }
+})
+
+yargs.parse() // To set above changes

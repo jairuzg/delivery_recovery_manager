@@ -30,6 +30,7 @@ function transferPaymentsToExternalDB(connFb, payments, serverName) {
                     if (!errors && isOk) {
                         console.log(`Successfully synchronized payment with orderId ${fbPayment.ordenID} from server ${serverName} with Firebase`);
                     } else {
+                        console.log("error when trying to synchronize payment with orderId " + fbPayment.ordenID + " " + errors);
                         deletePaymentInExternalDB(connFb, resp.fbPayment).then(resp => {
                             if (resp.errorFb) {
                                 console.log(`Error while trying to delete the payment with orderId ${fbPayment.ordenID}, writing logs to manually fix it`);

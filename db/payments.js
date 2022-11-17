@@ -31,7 +31,7 @@ async function savePaymentInExternalDB(fbConn, fbPayment){
 }
 
 function updatePaymentExternalDBIdByOrderId(connMysql, fbPayment, callback){
-    let sql = "update payment set external_db_id = ? where ordenID = ?";
+    let sql = "update pago set external_db_id = ? where ordenID = ?";
 
     connMysql.query(sql, [fbPayment.firebaseId, fbPayment.ordenID], (errors, result) => {
         if(!errors) {
