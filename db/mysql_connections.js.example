@@ -1,0 +1,45 @@
+const mysql = require('mysql');
+const constants = require("../common/moduleConstants");
+
+const connMysqlA = mysql.createConnection({
+    host: 'HOST',
+    user: 'USER',
+    password: 'PASSWD',
+    database: 'DBNAME'
+});
+
+const connMysqlB = mysql.createConnection({
+    host: 'HOST',
+    user: 'USER',
+    password: 'PASSWD',
+    database: 'DBNAME'
+});
+
+const connMysqlC = mysql.createConnection({
+    host: 'HOST',
+    user: 'USER',
+    password: 'PASSWD',
+    database: 'DBNAME'
+});
+
+const getMysqlConnection = (serverName) => {
+    let connMysql;
+    switch (serverName) {
+        case constants.SERVIDOR_A:
+            connMysql = connMysqlA;
+            break;
+        case constants.SERVIDOR_B:
+            connMysql = connMysqlB;
+            break;
+        case constants.SERVIDOR_C:
+            connMysql = connMysqlC;
+    }
+    return connMysql;
+}
+
+module.exports = {
+    connMysqlA: connMysqlA,
+    connMysqlB: connMysqlB,
+    connMysqlC: connMysqlC,
+    getMysqlConnection: getMysqlConnection
+}
